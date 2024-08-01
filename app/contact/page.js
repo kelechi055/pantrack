@@ -1,45 +1,53 @@
-'use client';
+'use client'; // Enables client-side features
 
-import { Box, Typography, TextField, Button, AppBar, Toolbar, IconButton, Link } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { firestore, auth } from '@/firebase'; 
+import { Box, Modal, Typography, Stack, TextField, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
 import Image from 'next/image'; 
-import { useRouter } from 'next/navigation'; 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth';
 
 export default function ContactPage() {
+  const [user, setUser] = useState(null);
+  const [status, setStatus] = useState('');
   const router = useRouter();
-  const [status, setStatus] = useState(''); 
+
+  useEffect(() => {
+    // Fetch user on component mount
+    const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribeAuth(); // Clean up subscription on unmount
+  }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const message = formData.get('message');
+
+    try {
+      // Here you would handle form submission, e.g., sending an email
+      setStatus('Message sent successfully!');
+      form.reset();
+    } catch (error) {
+      setStatus('Error sending message.');
+    }
+  };
 
   const handleNavClick = (path) => {
     router.push(path);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault(); 
-
-    const formData = new FormData(event.target);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      message: formData.get('message'),
-    };
-
+  const handleSignOut = async () => {
     try {
-      const response = await fetch('https://formspree.io/f/mzzprgzl', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        setStatus('Message sent successfully!');
-        event.target.reset(); 
-      } else {
-        setStatus('Error sending message. Please try again.');
-      }
+      await signOut(auth);
+      router.push('/'); // Redirect to the home page after sign out
     } catch (error) {
-      setStatus('Error sending message. Please try again.');
+      console.error('Sign out error:', error);
     }
   };
 
@@ -50,14 +58,20 @@ export default function ContactPage() {
       display="flex"
       flexDirection="column"
     >
-      {/* Navbar */}
-      <AppBar position="static" sx={{ backgroundColor: '#333', padding: '10px 20px' }}>
-        <Toolbar>
-          {/* Logo */}
-          <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
-            <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
-          </IconButton>
-          {/* Navigation Links */}
+      {/* Top Navbar */}
+      <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* Left Section: Logo and Pantrack Text */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
+              <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
+            </IconButton>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+              ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            </Typography>
+          </Box>
+
+          {/* Centered Navigation Links */}
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
             <Link
               href="#"
@@ -80,6 +94,25 @@ export default function ContactPage() {
             >
               Contact
             </Link>
+          </Box>
+
+          {/* User Profile Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {user && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar alt={user.displayName || 'User'} src={user.photoURL || '/default-avatar.png'} sx={{ mr: 2 }} />
+                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                  {user.displayName.split(' ')[0]} {/* Display first name only */}
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleSignOut}
+                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
+                >
+                  Sign Out
+                </Button>
+              </Box>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -170,7 +203,7 @@ export default function ContactPage() {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        sx={{ backgroundColor: '#333', color: 'white' }}
+        sx={{ backgroundColor: '#212121', color: 'white' }}
       >
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
           © {new Date().getFullYear()} Kelechi Opurum. All rights reserved.

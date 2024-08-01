@@ -1,31 +1,43 @@
 'use client'; // Enables client-side features
 
 import { useState, useEffect } from 'react';
-import { firestore } from '@/firebase'; 
-import { Box, Modal, Typography, Stack, TextField, Button, AppBar, Toolbar, IconButton, Link } from '@mui/material';
+import { firestore, auth } from '@/firebase'; 
+import { Box, Modal, Typography, Stack, TextField, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
 import { collection, deleteDoc, doc, getDocs, query, setDoc, getDoc } from 'firebase/firestore';
 import Image from 'next/image'; 
 import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth'; 
 
-
-export default function trackerPage() {
+export default function TrackerPage() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false); 
   const [itemName, setItemName] = useState('');
+  const [user, setUser] = useState(null);
   const router = useRouter();
 
-  const updateInventory = async () => {
-    const snapshot = query(collection(firestore, 'inventory'));
-    const docs = await getDocs(snapshot);
-    const inventoryList = [];
-    docs.forEach((doc) => {
-      inventoryList.push({
-        name: doc.id,
-        ...doc.data(),
-      });
+  useEffect(() => {
+    // Fetch user and inventory on component mount
+    const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
     });
-    setInventory(inventoryList);
-  };
+
+    const updateInventory = async () => {
+      const snapshot = query(collection(firestore, 'inventory'));
+      const docs = await getDocs(snapshot);
+      const inventoryList = [];
+      docs.forEach((doc) => {
+        inventoryList.push({
+          name: doc.id,
+          ...doc.data(),
+        });
+      });
+      setInventory(inventoryList);
+    };
+
+    updateInventory();
+
+    return () => unsubscribeAuth(); // Clean up subscription on unmount
+  }, []);
 
   const addItem = async (item) => { 
     if (item.trim() === '') return; // Error checking 
@@ -58,15 +70,34 @@ export default function trackerPage() {
     await updateInventory(); 
   };
 
-  useEffect(() => {
-    updateInventory();
-  }, []);
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleNavClick = (path) => {
     router.push(path);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      router.push('/'); // Redirect to the home page after sign out
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
+  // Function to update inventory
+  const updateInventory = async () => {
+    const snapshot = query(collection(firestore, 'inventory'));
+    const docs = await getDocs(snapshot);
+    const inventoryList = [];
+    docs.forEach((doc) => {
+      inventoryList.push({
+        name: doc.id,
+        ...doc.data(),
+      });
+    });
+    setInventory(inventoryList);
   };
 
   return (
@@ -81,15 +112,14 @@ export default function trackerPage() {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Left Section: Logo and Pantrack Text */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="logo"
-              sx={{ mr: 2 }}
-              onClick={() => router.push('/')}
-            >
+            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+            </Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
+             ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
@@ -115,6 +145,25 @@ export default function trackerPage() {
             >
               Contact
             </Link>
+          </Box>
+
+          {/* User Profile Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {user && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar alt={user.displayName || 'User'} src={user.photoURL || '/default-avatar.png'} sx={{ mr: 2 }} />
+                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                  {user.displayName.split(' ')[0]} {/* Display first name only */}
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleSignOut}
+                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
+                >
+                  Sign Out
+                </Button>
+              </Box>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -220,17 +269,10 @@ export default function trackerPage() {
                 </Typography>
                 <Button
                   variant="contained"
-                  onClick={() => removeItem(item.name)}
                   color="error"
+                  onClick={() => removeItem(item.name)}
                 >
                   Remove
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => addItem(item.name)}
-                  color="success"
-                >
-                  Add
                 </Button>
               </Box>
             ))}
@@ -240,15 +282,18 @@ export default function trackerPage() {
 
       {/* Footer */}
       <Box
+        component="footer"
         width="100%"
-        height="50px"
         display="flex"
-        alignItems="center"
         justifyContent="center"
-        sx={{ backgroundColor: '#212121', color: 'white' }}
+        alignItems="center"
+        p={2}
+        bgcolor="#212121"
+        color="white"
+        sx={{ borderTop: '1px solid #333' }}
       >
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          © {new Date().getFullYear()} Kelechi Opurum. All rights reserved.
+          &copy; {new Date().getFullYear()} Pantrack. All rights reserved.
         </Typography>
       </Box>
     </Box>

@@ -35,11 +35,19 @@ export default function LandingPage() {
   };
 
   const handleGetStarted = () => {
-    router.push('/tracker');
+    if (user) {
+      router.push('/tracker');
+    } else {
+      router.push('/signin'); // Redirect to a sign-in page or show a message
+    }
   };
 
   const handleNavClick = (path) => {
-    router.push(path);
+    if (user || path === '/') {
+      router.push(path);
+    } else {
+      router.push('/signin'); // Redirect to a sign-in page or show a message
+    }
   };
 
   return (
@@ -57,31 +65,38 @@ export default function LandingPage() {
             <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+            </Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
+             ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-            >
-              Home
-            </Link>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/tracker')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-            >
-              Tracker
-            </Link>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/contact')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-            >
-              Contact
-            </Link>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Link
+                href="#"
+                onClick={() => handleNavClick('/')}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              >
+                Home
+              </Link>
+              <Link
+                href="#"
+                onClick={() => handleNavClick('/tracker')}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              >
+                Tracker
+              </Link>
+              <Link
+                href="#"
+                onClick={() => handleNavClick('/contact')}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              >
+                Contact
+              </Link>
+            </Box>
           </Box>
 
           {/* Google Sign-In Button or User Info */}
@@ -162,7 +177,7 @@ export default function LandingPage() {
               fontWeight: 'bold',
             }}
           >
-            Get Started!
+            Start Tracking!
           </Button>
         </Box>
         <Image src="/staff.png" alt="Staff Image" width={900} height={450} style={{ marginTop: '20px', borderRadius: '20px' }} />
