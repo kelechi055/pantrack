@@ -1,25 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Link,
-  Avatar,
-} from '@mui/material';
+import { Box, Typography, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import {
-  auth,
-  googleProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-} from '@/firebase'; 
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/firebase';
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
@@ -30,15 +15,12 @@ export default function LandingPage() {
       setUser(currentUser);
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
-  const handleSignIn = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error('Error signing in: ', error);
-    }
+  const handleSignIn = () => {
+    // Redirect to the sign-in page
+    router.push('/signin');
   };
 
   const handleSignOut = async () => {
@@ -66,74 +48,47 @@ export default function LandingPage() {
   };
 
   return (
-    <Box width="100vw" height="100vh" display="flex" flexDirection="column">
+    <Box
+      width="100vw"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+    >
       {/* Navbar */}
-      <AppBar
-        position="static"
-        sx={{ backgroundColor: '#212121', padding: '10px 20px' }}
-      >
-        <Toolbar
-          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          {/* Left Section: Pantrack Logo */}
+      <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* Left Section: Logo and Pantrack Text */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="logo"
-              sx={{ mr: 2 }}
-              onClick={() => handleNavClick('/')}
-            >
-              <Image
-                src="/pantracklogo.png"
-                alt="Pantrack Logo"
-                width={60}
-                height={60}
-              />
+            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
+              <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
-             ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
-            </Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}></Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
             </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Link
                 href="#"
                 onClick={() => handleNavClick('/')}
-                sx={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  fontWeight: 'bold',
-                  margin: '0 20px',
-                }}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
               >
                 Home
               </Link>
               <Link
                 href="#"
                 onClick={() => handleNavClick('/tracker')}
-                sx={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  fontWeight: 'bold',
-                  margin: '0 20px',
-                }}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
               >
                 Tracker
               </Link>
               <Link
                 href="#"
                 onClick={() => handleNavClick('/contact')}
-                sx={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  fontWeight: 'bold',
-                  margin: '0 20px',
-                }}
+                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
               >
                 Contact
               </Link>
@@ -142,45 +97,30 @@ export default function LandingPage() {
 
           {/* Google Sign-In Button or User Info */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar
+              alt={user ? user.displayName : 'User Avatar'}
+              src={user ? user.photoURL : '/noaccount.png'}
+              sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
+            />
             {!user ? (
               <Button
                 variant="contained"
-                onClick={() => router.push('/signin')} 
-                sx={{
-                  backgroundColor: '#22C55E',
-                  '&:hover': { backgroundColor: '#16A34A' },
-                  borderRadius: '20px',
-                  padding: '8px 16px',
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                }}
+                onClick={handleSignIn}
+                sx={{ backgroundColor: '#22C55E', '&:hover': { backgroundColor: '#16A34A' } }}
+                style={{ borderRadius: '20px' }}
               >
                 Sign In
               </Button>
             ) : (
               <>
-                <Avatar
-                  alt={user.displayName}
-                  src={user.photoURL}
-                  sx={{ width: 40, height: 40, marginRight: 2 }}
-                />
-                <Typography
-                  variant="body1"
-                  sx={{ color: 'white', marginRight: 2 }}
-                >
-                  {user.displayName.split(' ')[0]} {/* Displays the users first name only */}
+                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                  {user.displayName.split(' ')[0]} {/* Display first name only */}
                 </Typography>
                 <Button
                   variant="contained"
                   onClick={handleSignOut}
-                  sx={{
-                    backgroundColor: '#FF5555',
-                    '&:hover': { backgroundColor: '#B73E3E' },
-                    borderRadius: '20px',
-                    padding: '8px 16px',
-                    textTransform: 'none',
-                    fontWeight: 'bold',
-                  }}
+                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
+                  style={{ borderRadius: '20px' }}
                 >
                   Sign Out
                 </Button>
@@ -199,22 +139,30 @@ export default function LandingPage() {
         alignItems="center"
         justifyContent="center"
         sx={{
-          backgroundColor: '#fff', 
-          p: 4,
-          textAlign: 'center',
+          color: 'black',
+          backgroundImage: 'url(/test.png)',
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center', 
+          backgroundRepeat: 'no-repeat' 
         }}
       >
-        <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
-          <Typography variant="h3" mb={2} sx={{ fontWeight: 'bold' }}>
-            Pantrack: Transform Your Pantry Management
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          mb={4}
+        >
+          <Typography variant="h2" mb={2} sx={{ fontWeight: 'bold', alignItems:"center"}}>
+            Welcome to Pantrack🥕
           </Typography>
           <Typography variant="h6" mb={4}>
-            Effortlessly Add and Remove Items with Zero Hassle
+            Effortlessly Add and Remove Items, Find Delicious Recipes, and Track Your Pantry with Zero Hassle
           </Typography>
           <Button
             variant="contained"
             color="success"
             size="large"
+            alignItems="center"
             onClick={handleGetStarted}
             sx={{
               mt: 2,
@@ -225,35 +173,29 @@ export default function LandingPage() {
               padding: '10px 20px',
               borderRadius: '20px',
               textTransform: 'none',
-              fontSize: '16px',
+              fontSize: '20px',
               fontWeight: 'bold',
             }}
           >
             Start Tracking!
           </Button>
         </Box>
-        <Image
-          src="/staff.png"
-          alt="Staff Image"
-          width={900}
-          height={450}
-          style={{ marginTop: '20px', borderRadius: '20px' }}
-        />
       </Box>
 
       {/* Footer */}
       <Box
         width="100%"
-        height="50px"
+        height="20px"
         display="flex"
         alignItems="center"
         justifyContent="center"
-        sx={{ backgroundColor: '#212121', color: 'white' }}
+        sx={{ backgroundColor: '#fff', color: 'grey' }}
       >
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          © {new Date().getFullYear()} Kelechi Opurum. All rights reserved.
-        </Typography>
-      </Box>
+      <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '12px' }}>
+        Built by Kelechi Opurum
+      </Typography>
+       </Box>
+
     </Box>
   );
 }

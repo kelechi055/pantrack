@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth'; 
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import axios from 'axios'; 
+import { Snackbar, Alert } from '@mui/material';
 
 export default function TrackerPage() {
   const [inventory, setInventory] = useState([]);
@@ -18,6 +19,10 @@ export default function TrackerPage() {
   const [recipes, setRecipes] = useState([]); 
   const [loadingRecipes, setLoadingRecipes] = useState(false); 
   const router = useRouter();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  
 
 
   const handleSignIn = async () => {
@@ -130,23 +135,42 @@ export default function TrackerPage() {
 
   const fetchRecipes = async () => {
     const apiKey = 'f290ea3c4c8e493eaa84c32f30ed1572'; 
-    const ingredients = inventory.map(item => item.name).join(','); // Converts the users pantry items to a comma-separated list
-
+    const ingredients = inventory.map(item => item.name).join(','); 
+  
     setLoadingRecipes(true); 
-
+  
     try {
+      if (ingredients.trim() === '') {
+        setSnackbarMessage('No items in your pantry to find recipes.');
+        setSnackbarSeverity('info');
+        setSnackbarOpen(true);
+        return;
+      }
+  
       const response = await axios.get(
         `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&number=5&apiKey=${apiKey}`
       );
-
-      setRecipes(response.data); // Stores the list of recipes in state
+  
+      if (response.data.length === 0) {
+        setSnackbarMessage('No recipes found with the current ingredients.');
+        setSnackbarSeverity('info');
+      } else {
+        setSnackbarMessage('Recipes successfully loaded!');
+        setSnackbarSeverity('success');
+      }
+  
+      setRecipes(response.data);
     } catch (error) {
       console.error('Error fetching recipes:', error);
+      setSnackbarMessage('Error fetching recipes.');
+      setSnackbarSeverity('error');
       setRecipes([]); 
     } finally {
       setLoadingRecipes(false); 
+      setSnackbarOpen(true); 
     }
   };
+  
 
   return (
     <Box
@@ -166,7 +190,7 @@ export default function TrackerPage() {
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
             </Typography>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
-             ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
             </Typography>
           </Box>
 
@@ -245,13 +269,13 @@ export default function TrackerPage() {
         <br></br>
         {/* Inventory Section */}
         <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2}>
-  <Typography variant="h4" spacing={2} mb={2}>
+  <Typography variant="h4" spacing={2} mb={2} fontWeight={'bold'}>
     Your Pantry
   </Typography>
   <Stack direction="row" spacing={2} mb={2}>
     <TextField
       variant="outlined"
-      label="Add an item"
+      label="Add an item..."
       fullWidth
       value={itemName}
       onChange={(e) => setItemName(e.target.value)}
@@ -263,58 +287,82 @@ export default function TrackerPage() {
   </Stack>
 
   <List>
-    {inventory.map((item) => (
-      <ListItem key={item.name} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-        <ListItemText
-          primary={item.name}
-          secondary={`Quantity: ${item.quantity}`}
-        />
-        {/* Buttons to increase and decrease quantity */}
-        <Button
-            variant="contained"
-            color="error"
-            onClick={() => removeItem(item.name, true)} 
-            style={{
-              borderRadius: '50%', 
-              width: '40px',       
-              height: '40px',      
-              minWidth: '40px',    
-              padding: 0,          
-            }}
-          >
-            -
-          </Button>
-          <Typography variant="body1" sx={{ mx: 2 }}>
-            {item.quantity}
+  {inventory.map((item) => (
+    <ListItem
+      key={item.name}
+      sx={{
+        mb: 1,
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      {/* Bold Item Name */}
+      <ListItemText
+        primary={
+          <Typography sx={{ fontWeight: 'bold', fontSize: '25px'}}>
+            {item.name}
           </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => addItem(item.name, true)} 
-            style={{
-              borderRadius: '50%', 
-              width: '40px',       
-              height: '40px',      
-              minWidth: '40px',    
-              padding: 0,          
-            }}
-          >
-            +
-          </Button>
+        }
+        secondary={
+          <Typography variant="body1">
+            Quantity: {item.quantity}
+          </Typography>
+        }
+      />
 
-      </ListItem>
-    ))}
-  </List>
+      {/* Buttons to increase and decrease quantity */}
+      <Button
+        variant="contained"
+        color="error"
+        onClick={() => removeItem(item.name, true)}
+        style={{
+          borderRadius: '50%',
+          width: '40px',
+          height: '40px',
+          minWidth: '40px',
+          padding: 0,
+          fontWeight: 'bold',
+        }}
+      >
+        -
+      </Button>
+
+      <Typography
+        variant="body1"
+        sx={{ mx: 2, fontWeight: 'bold' }} 
+      >
+        {item.quantity}
+      </Typography>
+
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => addItem(item.name, true)}
+        style={{
+          borderRadius: '50%',
+          width: '40px',
+          height: '40px',
+          minWidth: '40px',
+          padding: 0,
+          fontWeight: 'bold',
+        }}
+      >
+        +
+      </Button>
+    </ListItem>
+  ))}
+</List>
 </Box>
 
 
         {/* Recipe Suggestions Section */}
         <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2} mt={4}>
-          <Typography variant="h4" mb={2}>
+        <Typography sx={{ fontWeight: 'bold', fontSize: '25px'}}>
             Suggested Recipes
           </Typography>
 
           {/* Button to fetch recipes */}
+          <br></br>
           <Button
             variant="contained"
             color="primary"
@@ -326,9 +374,12 @@ export default function TrackerPage() {
 
           {/* Recipe List */}
           {loadingRecipes && (
-            <Box display="flex" justifyContent="center" mt={2}>
+            <Box display="flex" justifyContent="center" mt={2}> 
+              
               <CircularProgress />
             </Box>
+            
+          
           )}
 
           <List>
@@ -347,27 +398,26 @@ export default function TrackerPage() {
                   View Recipe
                 </Button>
               </ListItem>
+              
             ))}
           </List>
         </Box>
       </Box>
-      <br></br>
-      <br></br>
-      {/* Footer */}
-      <Box
-        component="footer"
-        sx={{
-          width: '100%',
-          backgroundColor: '#212121',
-          color: '#ffffff',
-          p: 2,
-          textAlign: 'center',
-        }}
+            {/* Snackbar for messages */}
+            <Snackbar
+        open={snackbarMessage !== ''}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarMessage('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Typography variant="body2" component="p">
-          &copy; {new Date().getFullYear()} Pantrack. All rights reserved.
-        </Typography>
-      </Box>
+        <Alert
+          onClose={() => setSnackbarMessage('')}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage} 
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

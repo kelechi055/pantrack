@@ -11,7 +11,7 @@ export default function ContactPage() {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState('');
   const router = useRouter();
-
+  
   useEffect(() => {
     
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
@@ -71,7 +71,7 @@ export default function ContactPage() {
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-              ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
             </Typography>
           </Box>
 
@@ -208,20 +208,6 @@ export default function ContactPage() {
             )}
           </form>
         </Box>
-      </Box>
-
-      {/* Footer */}
-      <Box
-        width="100%"
-        height="50px"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ backgroundColor: '#212121', color: 'white' }}
-      >
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          © {new Date().getFullYear()} Kelechi Opurum. All rights reserved.
-        </Typography>
       </Box>
     </Box>
   );
