@@ -1,11 +1,11 @@
-'use client'; // Enables client-side features
+'use client'; 
 
 import { useState, useEffect } from 'react';
-import { firestore, auth } from '@/firebase'; 
-import { Box, Modal, Typography, Stack, TextField, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
+import { Box, AppBar, Toolbar, IconButton, Link, Avatar, Typography, TextField, Button } from '@mui/material';
 import Image from 'next/image'; 
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
+import { auth } from '@/firebase'; 
 
 export default function ContactPage() {
   const [user, setUser] = useState(null);
@@ -13,41 +13,45 @@ export default function ContactPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch user on component mount
+    
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
 
-    return () => unsubscribeAuth(); // Clean up subscription on unmount
+    return () => unsubscribeAuth(); 
   }, []);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
-
-    try {
-      // Here you would handle form submission, e.g., sending an email
-      setStatus('Message sent successfully!');
-      form.reset();
-    } catch (error) {
-      setStatus('Error sending message.');
-    }
-  };
-
-  const handleNavClick = (path) => {
-    router.push(path);
-  };
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      router.push('/'); // Redirect to the home page after sign out
+      router.push('/'); 
     } catch (error) {
       console.error('Sign out error:', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch('https://formspree.io/f/mzzprgzl', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        setStatus('Message sent successfully!');
+        e.target.reset();
+      } else {
+        setStatus('Error sending message.');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatus('Error sending message.');
     }
   };
 
@@ -63,7 +67,7 @@ export default function ContactPage() {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Left Section: Logo and Pantrack Text */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
+            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => router.push('/')}>
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
@@ -75,21 +79,21 @@ export default function ContactPage() {
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
             <Link
               href="#"
-              onClick={() => handleNavClick('/')}
+              onClick={() => router.push('/')}
               sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
             >
               Home
             </Link>
             <Link
               href="#"
-              onClick={() => handleNavClick('/tracker')}
+              onClick={() => router.push('/tracker')}
               sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
             >
               Tracker
             </Link>
             <Link
               href="#"
-              onClick={() => handleNavClick('/contact')}
+              onClick={() => router.push('/contact')}
               sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
             >
               Contact
@@ -126,7 +130,17 @@ export default function ContactPage() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        sx={{ backgroundColor: '#D18060', p: 4 }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          backgroundImage: 'url(/loginbg.png)', 
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat', 
+        }}
       >
         <Box
           width="100%"
@@ -140,17 +154,17 @@ export default function ContactPage() {
           gap={3}
           alignItems="center"
         >
-          <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
+          <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
             Contact Me ✉️
           </Typography>
           
-          <Typography variant="body1" sx={{ mb: 4, color: '#555' }}>
-            Any suggestions or inquiries? Feel free to reach out.
+          <Typography variant="body1" sx={{ mb: 4 }}>
+            Any suggestions or inquiries? Feel free to reach out to using the form below.
           </Typography>
 
           <form
             onSubmit={handleSubmit}
-            style={{ width: '100%' }}
+            style={{ width: '100%', maxWidth: '600px' }}
           >
             <TextField
               variant="outlined"
@@ -184,9 +198,8 @@ export default function ContactPage() {
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ backgroundColor: '#4CAF50', '&:hover': { backgroundColor: '#388E3C' } }}
             >
-              Send Message
+              Send
             </Button>
             {status && (
               <Typography variant="body2" sx={{ mt: 2, color: status.startsWith('Error') ? 'red' : 'green' }}>

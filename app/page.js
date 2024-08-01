@@ -1,10 +1,25 @@
-'use client'; // Enables client-side features
+'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Button,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Link,
+  Avatar,
+} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/firebase'; // Import your Firebase functions
+import {
+  auth,
+  googleProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+} from '@/firebase'; 
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
@@ -15,7 +30,7 @@ export default function LandingPage() {
       setUser(currentUser);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); 
   }, []);
 
   const handleSignIn = async () => {
@@ -38,7 +53,7 @@ export default function LandingPage() {
     if (user) {
       router.push('/tracker');
     } else {
-      router.push('/signin'); // Redirect to a sign-in page or show a message
+      router.push('/signin'); 
     }
   };
 
@@ -46,29 +61,40 @@ export default function LandingPage() {
     if (user || path === '/') {
       router.push(path);
     } else {
-      router.push('/signin'); // Redirect to a sign-in page or show a message
+      router.push('/signin'); 
     }
   };
 
   return (
-    <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-    >
+    <Box width="100vw" height="100vh" display="flex" flexDirection="column">
       {/* Navbar */}
-      <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Left Section: Logo and Pantrack Text */}
+      <AppBar
+        position="static"
+        sx={{ backgroundColor: '#212121', padding: '10px 20px' }}
+      >
+        <Toolbar
+          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        >
+          {/* Left Section: Pantrack Logo */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
-              <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="logo"
+              sx={{ mr: 2 }}
+              onClick={() => handleNavClick('/')}
+            >
+              <Image
+                src="/pantracklogo.png"
+                alt="Pantrack Logo"
+                width={60}
+                height={60}
+              />
             </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            </Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
              ㅤ ㅤ ㅤ ㅤ ㅤ ㅤ
+            </Typography>
             </Typography>
           </Box>
 
@@ -78,21 +104,36 @@ export default function LandingPage() {
               <Link
                 href="#"
                 onClick={() => handleNavClick('/')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+                sx={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  margin: '0 20px',
+                }}
               >
                 Home
               </Link>
               <Link
                 href="#"
                 onClick={() => handleNavClick('/tracker')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+                sx={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  margin: '0 20px',
+                }}
               >
                 Tracker
               </Link>
               <Link
                 href="#"
                 onClick={() => handleNavClick('/contact')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+                sx={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  margin: '0 20px',
+                }}
               >
                 Contact
               </Link>
@@ -104,9 +145,15 @@ export default function LandingPage() {
             {!user ? (
               <Button
                 variant="contained"
-                onClick={handleSignIn}
-                sx={{ backgroundColor: '#22C55E', '&:hover': { backgroundColor: '#16A34A' } }}
-                style={{ borderRadius: '20px' }}
+                onClick={() => router.push('/signin')} 
+                sx={{
+                  backgroundColor: '#22C55E',
+                  '&:hover': { backgroundColor: '#16A34A' },
+                  borderRadius: '20px',
+                  padding: '8px 16px',
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                }}
               >
                 Sign In
               </Button>
@@ -117,14 +164,23 @@ export default function LandingPage() {
                   src={user.photoURL}
                   sx={{ width: 40, height: 40, marginRight: 2 }}
                 />
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  {user.displayName.split(' ')[0]} {/* Display first name only */}
+                <Typography
+                  variant="body1"
+                  sx={{ color: 'white', marginRight: 2 }}
+                >
+                  {user.displayName.split(' ')[0]} {/* Displays the users first name only */}
                 </Typography>
                 <Button
                   variant="contained"
                   onClick={handleSignOut}
-                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
-                  style={{ borderRadius: '20px' }}
+                  sx={{
+                    backgroundColor: '#FF5555',
+                    '&:hover': { backgroundColor: '#B73E3E' },
+                    borderRadius: '20px',
+                    padding: '8px 16px',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                  }}
                 >
                   Sign Out
                 </Button>
@@ -137,23 +193,18 @@ export default function LandingPage() {
       {/* Main Content */}
       <Box
         width="100%"
-        height="calc(100% - 64px - 50px)" // Adjust for Navbar height and footer height
+        height="calc(100% - 64px - 50px)" 
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
         sx={{
-          backgroundColor: '#D18060', // Slightly darker background color for contrast
+          backgroundColor: '#fff', 
           p: 4,
           textAlign: 'center',
         }}
       >
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          mb={4}
-        >
+        <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
           <Typography variant="h3" mb={2} sx={{ fontWeight: 'bold' }}>
             Pantrack: Transform Your Pantry Management
           </Typography>
@@ -173,7 +224,7 @@ export default function LandingPage() {
               },
               padding: '10px 20px',
               borderRadius: '20px',
-              textTransform: 'none',  
+              textTransform: 'none',
               fontSize: '16px',
               fontWeight: 'bold',
             }}
@@ -181,7 +232,13 @@ export default function LandingPage() {
             Start Tracking!
           </Button>
         </Box>
-        <Image src="/staff.png" alt="Staff Image" width={900} height={450} style={{ marginTop: '20px', borderRadius: '20px' }} />
+        <Image
+          src="/staff.png"
+          alt="Staff Image"
+          width={900}
+          height={450}
+          style={{ marginTop: '20px', borderRadius: '20px' }}
+        />
       </Box>
 
       {/* Footer */}

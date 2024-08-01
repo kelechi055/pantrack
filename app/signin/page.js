@@ -3,8 +3,8 @@
 import { Box, Typography, Button, Container } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '@/firebase'; // Import your Firebase functions
-import Image from 'next/image'; // Import Image component for Next.js
+import { auth, googleProvider } from '@/firebase'; 
+import Image from 'next/image'; 
 
 export default function SignInPage() {
   const router = useRouter();
@@ -12,7 +12,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      router.push('/tracker'); // Redirect to a default page after sign-in
+      router.push('/tracker'); 
     } catch (error) {
       console.error('Error signing in with Google: ', error);
     }
@@ -20,15 +20,17 @@ export default function SignInPage() {
 
   return (
     <Container
-      maxWidth="100%"
+      maxWidth="false"
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#D18060', // Original background color
-        p: 4,
+        backgroundImage: 'url(/loginbg.png)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat', 
       }}
     >
       <Box
@@ -44,14 +46,14 @@ export default function SignInPage() {
         }}
       >
         <Image
-          src="/google-logo.png" // Path to your Google logo image
+          src="/google-logo.png" 
           alt="Google Logo"
           width={200}
           height={100}
-          style={{ marginBottom: '20px' }} // Add spacing below the logo
+          style={{ marginBottom: '20px' }} 
         />
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
-        Create an account
+          Create an account
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, color: '#555' }}>
           Access your pantry management tools and more.
