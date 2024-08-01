@@ -32,9 +32,6 @@ export default function LandingPage() {
       <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }}>
         <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
       </IconButton>
-      <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-        Pantrack
-      </Typography>
     </Box>
 
     {/* Centered Navigation Links */}

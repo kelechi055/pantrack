@@ -7,6 +7,7 @@ import { collection, deleteDoc, doc, getDocs, query, setDoc, getDoc } from 'fire
 import Image from 'next/image'; 
 import { useRouter } from 'next/navigation';
 
+
 export default function trackerPage() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false); 
@@ -89,9 +90,6 @@ export default function trackerPage() {
             >
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-              Pantrack
-            </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
