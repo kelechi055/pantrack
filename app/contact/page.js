@@ -108,6 +108,7 @@ export default function ContactPage() {
                   variant="contained"
                   onClick={handleSignOut}
                   sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
+                  style={{ borderRadius: '20px' }}
                 >
                   Sign Out
                 </Button>
