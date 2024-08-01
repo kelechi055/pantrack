@@ -4,6 +4,7 @@ import { Box, Typography, Button, Container } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/firebase'; // Import your Firebase functions
+import Image from 'next/image'; // Import Image component for Next.js
 
 export default function SignInPage() {
   const router = useRouter();
@@ -39,10 +40,18 @@ export default function SignInPage() {
           p: 4,
           borderRadius: 2,
           boxShadow: 3,
+          textAlign: 'center',
         }}
       >
+        <Image
+          src="/google-logo.png" // Path to your Google logo image
+          alt="Google Logo"
+          width={200}
+          height={100}
+          style={{ marginBottom: '20px' }} // Add spacing below the logo
+        />
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold', color: '#333' }}>
-          Sign In to Your Account
+        Create an account
         </Typography>
         <Typography variant="body1" sx={{ mb: 4, color: '#555' }}>
           Access your pantry management tools and more.
@@ -58,6 +67,9 @@ export default function SignInPage() {
             borderRadius: '20px',
             textTransform: 'none',
             fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           Sign in with Google
