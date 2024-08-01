@@ -141,6 +141,9 @@ export default function LandingPage() {
         sx={{
           color: 'black',
           backgroundImage: 'url(/test.png)',
+          //part of Image by freepik.com
+          //part of image by mindfoodness.com
+
           backgroundSize: 'cover', 
           backgroundPosition: 'center', 
           backgroundRepeat: 'no-repeat' 
