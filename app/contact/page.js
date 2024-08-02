@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/firebase';
+import { Analytics } from "@vercel/analytics/react"
 
 const provider = new GoogleAuthProvider();
 

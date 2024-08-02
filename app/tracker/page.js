@@ -10,6 +10,7 @@ import { signOut } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function TrackerPage() {
   const [inventory, setInventory] = useState([]);

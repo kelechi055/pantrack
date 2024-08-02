@@ -5,6 +5,7 @@ import { Box, Typography, Button, AppBar, Toolbar, IconButton, Link, Avatar } fr
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth, signOut, onAuthStateChanged } from '@/firebase'; // Import your Firebase functions
+import { Analytics } from "@vercel/analytics/react"
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
