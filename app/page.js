@@ -56,6 +56,8 @@ export default function LandingPage() {
       flexDirection="column"
       sx={{ overflow: 'hidden' }} // Ensures no overflow
     >
+
+  
 {/* Navbar */}
 <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
   <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

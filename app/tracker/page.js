@@ -160,7 +160,7 @@ export default function TrackerPage() {
   const filteredInventory = inventory.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   return (
     <Box
       sx={{
@@ -371,8 +371,8 @@ export default function TrackerPage() {
 
         {/* Recipe Suggestions Section */}
         <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2} mt={4} mb={4}>
-          <Typography sx={{ fontWeight: 'bold', fontSize: '25px'}}>
-            Suggested Recipes (Broken, fixing )
+        <Typography variant="h4" spacing={2} mb={2} fontWeight={'bold'}>
+            🧾Suggested Recipes
           </Typography>
           <br></br>
           <Button
