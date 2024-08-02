@@ -5,20 +5,7 @@ import { Box, Typography, Button, AppBar, Toolbar, IconButton, Link, Avatar } fr
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { auth, signOut, onAuthStateChanged } from '@/firebase'; // Import your Firebase functions
-
-(function() {
-  var script = document.createElement('script');
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-YD1P0XSHXX';
-  script.async = true;
-  document.head.appendChild(script);
-
-  script.onload = function() {
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-YD1P0XSHXX');
-  };
-})();
+import { Analytics } from "@vercel/analytics/react"
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
