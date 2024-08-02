@@ -56,96 +56,96 @@ export default function LandingPage() {
       flexDirection="column"
       sx={{ overflow: 'hidden' }} // Ensures no overflow
     >
-       {/* Navbar */}
-       <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Left Section: Logo and Pantrack Text */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="logo"
-              sx={{ mr: 2 }}
-              onClick={() => handleNavClick('/')}
-            >
-              <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
-            </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            ㅤ  ㅤ ㅤ
-            </Typography>
-          </Box>
+{/* Navbar */}
+<AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
+  <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    {/* Left Section: Logo and Pantrack Text */}
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="logo"
+        sx={{ mr: 2 }}
+        onClick={() => handleNavClick('/')}
+      >
+        <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
+      </IconButton>
+      <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+        ㅤ  ㅤ ㅤ
+      </Typography>
+    </Box>
 
-          {/* Centered Navigation Links */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
-            >
-              Home
-            </Link>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/tracker')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
-            >
-              Tracker
-            </Link>
-            <Link
-              href="#"
-              onClick={() => handleNavClick('/contact')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
-            >
-              Contact
-            </Link>
-          </Box>
+    {/* Centered Navigation Links */}
+    <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
+      <Link
+        href="#"
+        onClick={() => handleNavClick('/')}
+        sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+      >
+        Home
+      </Link>
+      <Link
+        href="#"
+        onClick={() => handleNavClick('/tracker')}
+        sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+      >
+        Tracker
+      </Link>
+      <Link
+        href="#"
+        onClick={() => handleNavClick('/contact')}
+        sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+      >
+        Contact
+      </Link>
+    </Box>
 
-          {/* Google Sign-In Button or User Info */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar
-              alt={user ? user.displayName : 'User Avatar'}
-              src={user ? user.photoURL : '/noaccount.png'}
-              sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
-            />
-            {!user ? (
-              <>
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  Guest
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleSignIn}
-                  sx={{
-                    backgroundColor: '#22C55E',
-                    '&:hover': { backgroundColor: '#16A34A' },
-                    borderRadius: '20px',
-                    display: 'block', // Ensure it displays on all screens
-                  }}
-                >
-                  Sign In
-              </Button>
-              </>
-            ) : (
-              <>
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  {user.displayName.split(' ')[0]} {/* Display first name only */}
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleSignOut}
-                  sx={{
-                    backgroundColor: '#FF5555',
-                    '&:hover': { backgroundColor: '#B73E3E' },
-                    borderRadius: '20px',
-                  }}
-                >
-                  Sign Out
-                </Button>
-              </>
-            )}
-          </Box>
-        </Toolbar>
-      </AppBar>
+    {/* Google Sign-In Button or User Info */}
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Avatar
+        alt={user ? user.displayName : 'User Avatar'}
+        src={user ? user.photoURL : '/noaccount.png'}
+        sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
+      />
+      {!user ? (
+        <>
+          <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+            Guest
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={handleSignIn}
+            sx={{
+              backgroundColor: '#22C55E',
+              '&:hover': { backgroundColor: '#16A34A' },
+              borderRadius: '20px',
+              display: 'block',
+            }}
+          >
+            Sign In
+          </Button>
+        </>
+      ) : (
+        <>
+          <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+            {user.displayName.split(' ')[0]}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={handleSignOut}
+            sx={{
+              backgroundColor: '#FF5555',
+              '&:hover': { backgroundColor: '#B73E3E' },
+              borderRadius: '20px',
+            }}
+          >
+            Sign Out
+          </Button>
+        </>
+      )}
+    </Box>
+  </Toolbar>
+</AppBar>
 
       {/* Main Content */}
       <Box
