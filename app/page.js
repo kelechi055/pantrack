@@ -150,7 +150,7 @@ export default function LandingPage() {
       {/* Main Content */}
       <Box
         width="100%"
-        height="calc(100% - 64px)" // Adjusted to fit the footer without leaving padding
+        height="calc(100% - 64px)" 
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -158,11 +158,11 @@ export default function LandingPage() {
         sx={{
           color: 'black',
           backgroundImage: 'url(/test.png)',
-          backgroundSize: 'cover', // Ensures the background image covers the entire element
-          backgroundPosition: 'center', // Centers the background image
-          backgroundRepeat: 'no-repeat', // Prevents the background image from repeating
-          position: 'relative', // Allows absolute positioning of footer
-          padding: '0 20px', // Adds horizontal padding for better mobile view
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center', 
+          backgroundRepeat: 'no-repeat', 
+          position: 'relative', 
+          padding: '0 20px', 
         }}
       >
         <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
@@ -208,9 +208,30 @@ export default function LandingPage() {
             py: 1, // Adds padding for vertical spacing
           }}
         >
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
+            textAlign: 'center',
+            fontSize: '12px',
+            color: 'grey',
+            paddingBottom: '10px',
+            py: 1, // Adds padding for vertical spacing
+          }}
+        >
           <Typography variant="body2">
-            Built with 💖 by Kelechi Opurum
+            Built with 💖 by{' '}
+            <a
+              href="https://www.linkedin.com/in/kelechi-opurum"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'inherit', textDecoration: 'underline' }}
+            >
+              Kelechi Opurum
+            </a>
           </Typography>
+        </Box>
         </Box>
       </Box>
     </Box>
