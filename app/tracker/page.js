@@ -372,7 +372,7 @@ export default function TrackerPage() {
         {/* Recipe Suggestions Section */}
         <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2} mt={4} mb={4}>
           <Typography sx={{ fontWeight: 'bold', fontSize: '25px'}}>
-            Suggested Recipes
+            Suggested Recipes (Broken, fixing )
           </Typography>
           <br></br>
           <Button
