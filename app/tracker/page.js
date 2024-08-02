@@ -120,9 +120,9 @@ export default function TrackerPage() {
   };
 
   const fetchRecipes = async () => {
-    const apiKey = 'f290ea3c4c8e493eaa84c32f30ed1572';
+    const apiKey = process.env.NEXT_PUBLIC_RECIPE_API_KEY;
     const ingredients = inventory.map(item => item.name).join(',');
-
+  
     setLoadingRecipes(true);
 
     try {

@@ -5,13 +5,13 @@ import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyB0aDx3LmIE6HRRiw9eKg8z1xV2nHxkdLs',
-  authDomain: 'pantrack-12913.firebaseapp.com',
-  projectId: 'pantrack-12913',
-  storageBucket: 'pantrack-12913.appspot.com',
-  messagingSenderId: '34467040828',
-  appId: '1:34467040828:web:19fe0bbdb8b5d8e3ebbd39',
-  measurementId: 'G-YD1P0XSHXX',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
