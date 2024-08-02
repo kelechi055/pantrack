@@ -140,6 +140,7 @@ export default function ContactPage() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat', 
+          overflow: 'hidden'
         }}
       >
         <Box

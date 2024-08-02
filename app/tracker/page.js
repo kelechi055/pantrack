@@ -187,11 +187,8 @@ export default function TrackerPage() {
             <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            </Typography>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
-            ㅤ  ㅤ ㅤ
-            </Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}></Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}> ㅤ ㅤ ㅤ</Typography>
           </Box>
 
           {/* Centered Navigation Links */}
@@ -258,19 +255,25 @@ export default function TrackerPage() {
 
       {/* Main Content */}
       <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        flexGrow={1}
-        bgcolor="#f5f5f5"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          backgroundImage: 'url(/pantry.png)', 
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat', 
+          overflow: 'hidden'
+        }}
       >
         <br></br>
         <br></br>
         {/* Inventory Section */}
         <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2}>
   <Typography variant="h4" spacing={2} mb={2} fontWeight={'bold'}>
-    Your Pantry
+    🍳Your Pantry
   </Typography>
   <Stack direction="row" spacing={2} mb={2}>
     <TextField
