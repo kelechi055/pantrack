@@ -1,10 +1,10 @@
-'use client';
+'use client'; // Enables client-side features
 
 import { useState, useEffect } from 'react';
 import { Box, Typography, Button, AppBar, Toolbar, IconButton, Link, Avatar } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/firebase';
+import { auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged } from '@/firebase'; // Import your Firebase functions
 
 export default function LandingPage() {
   const [user, setUser] = useState(null);
@@ -64,7 +64,7 @@ export default function LandingPage() {
             </IconButton>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}></Typography>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
+              ㅤ ㅤ ㅤ ㅤ
             </Typography>
           </Box>
 
@@ -95,38 +95,43 @@ export default function LandingPage() {
             </Box>
           </Box>
 
-          {/* Google Sign-In Button or User Info */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar
-              alt={user ? user.displayName : 'User Avatar'}
-              src={user ? user.photoURL : '/noaccount.png'}
-              sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
-            />
-            {!user ? (
-              <Button
-                variant="contained"
-                onClick={handleSignIn}
-                sx={{ backgroundColor: '#22C55E', '&:hover': { backgroundColor: '#16A34A' } }}
-                style={{ borderRadius: '20px' }}
-              >
-                Sign In
-              </Button>
-            ) : (
-              <>
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  {user.displayName.split(' ')[0]} {/* Display first name only */}
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleSignOut}
-                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
-                  style={{ borderRadius: '20px' }}
-                >
-                  Sign Out
-                </Button>
-              </>
-            )}
-          </Box>
+        {/* Google Sign-In Button or User Info */}
+<Box sx={{ display: 'flex', alignItems: 'center' }}>
+  <Avatar
+    alt={user ? user.displayName : 'User Avatar'}
+    src={user ? user.photoURL : '/noaccount.png'}
+    sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
+  />
+  {!user ? (
+    <>
+      <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+        Guest
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={handleSignIn}
+        sx={{ backgroundColor: '#22C55E', '&:hover': { backgroundColor: '#16A34A' } }}
+        style={{ borderRadius: '20px' }}
+      >
+        Sign In
+      </Button>
+    </>
+  ) : (
+    <>
+      <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+        {user.displayName.split(' ')[0]} {/* Display first name only */}
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={handleSignOut}
+        sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
+        style={{ borderRadius: '20px' }}
+      >
+        Sign Out
+      </Button>
+    </>
+  )}
+</Box>
         </Toolbar>
       </AppBar>
 
@@ -141,12 +146,9 @@ export default function LandingPage() {
         sx={{
           color: 'black',
           backgroundImage: 'url(/test.png)',
-          //part of Image by freepik.com
-          //part of image by mindfoodness.com
-
-          backgroundSize: 'cover', 
-          backgroundPosition: 'center', 
-          backgroundRepeat: 'no-repeat' 
+          backgroundSize: 'cover', // Ensures the background image covers the entire element
+          backgroundPosition: 'center', // Centers the background image
+          backgroundRepeat: 'no-repeat' // Prevents the background image from repeating
         }}
       >
         <Box

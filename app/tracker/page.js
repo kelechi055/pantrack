@@ -190,7 +190,7 @@ export default function TrackerPage() {
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
             </Typography>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>  
-            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
+            ㅤ  ㅤ ㅤ
             </Typography>
           </Box>
 

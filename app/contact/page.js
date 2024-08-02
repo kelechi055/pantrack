@@ -11,7 +11,7 @@ export default function ContactPage() {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState('');
   const router = useRouter();
-  
+
   useEffect(() => {
     
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
@@ -71,7 +71,7 @@ export default function ContactPage() {
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            ㅤ ㅤㅤ  ㅤ ㅤ ㅤ ㅤ
+            ㅤ  ㅤ ㅤ
             </Typography>
           </Box>
 
