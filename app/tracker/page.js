@@ -194,7 +194,7 @@ export default function TrackerPage() {
       </Typography>
     </Box>
 
-    {/* Centered Navigation Links */}
+    {/* Centers the Navigation Links */}
     <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
       <Link
         href="#"
@@ -219,8 +219,8 @@ export default function TrackerPage() {
       </Link>
     </Box>
 
-    {/* Google Sign-In Button or User Info */}
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    {/* Google Sign-In Button or Users Information */}
+    <Box sx={{ display: 'flex', alignItems: 'center' }}> 
       <Avatar
         alt={user ? user.displayName : 'User Avatar'}
         src={user ? user.photoURL : '/noaccount.png'}
