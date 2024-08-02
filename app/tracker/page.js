@@ -1,70 +1,70 @@
-'use client'; 
+'use client';
 
 import { useState, useEffect } from 'react';
-import { firestore, auth } from '@/firebase'; 
+import { firestore, auth } from '@/firebase';
 import { Box, Modal, Typography, Stack, TextField, Button, AppBar, Toolbar, IconButton, Link, Avatar, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
 import { collection, deleteDoc, doc, getDocs, query, setDoc, getDoc } from 'firebase/firestore';
-import Image from 'next/image'; 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth'; 
+import { signOut } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import axios from 'axios'; 
+import axios from 'axios';
 import { Snackbar, Alert } from '@mui/material';
 
 export default function TrackerPage() {
   const [inventory, setInventory] = useState([]);
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
   const [user, setUser] = useState(null);
-  const [recipes, setRecipes] = useState([]); 
-  const [loadingRecipes, setLoadingRecipes] = useState(false); 
+  const [recipes, setRecipes] = useState([]);
+  const [loadingRecipes, setLoadingRecipes] = useState(false);
   const router = useRouter();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  
-
 
   const handleSignIn = async () => {
-    const provider = new GoogleAuthProvider(); 
-  
+    const provider = new GoogleAuthProvider();
+
     try {
-      const result = await signInWithPopup(auth, provider); 
-      const user = result.user; 
-      setUser(user); 
-      router.push('/tracker'); 
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUser(user);
+      await updateInventory(user.uid); // Fetch user's inventory
+      router.push('/tracker');
     } catch (error) {
       console.error('Sign in error:', error);
     }
   };
-  
+
   useEffect(() => {
-    // Fetch user and inventory on component mount
-    const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
+    const unsubscribeAuth = auth.onAuthStateChanged(async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        await updateInventory(currentUser.uid); // Fetch user's inventory
+      }
     });
 
-    const updateInventory = async () => {
-      const snapshot = query(collection(firestore, 'inventory'));
-      const docs = await getDocs(snapshot);
-      const inventoryList = [];
-      docs.forEach((doc) => {
-        inventoryList.push({
-          name: doc.id,
-          ...doc.data(),
-        });
-      });
-      setInventory(inventoryList);
-    };
-
-    updateInventory();
-
-    return () => unsubscribeAuth(); 
+    return () => unsubscribeAuth();
   }, []);
 
-  const addItem = async (item) => { 
-    if (item.trim() === '') return; // Error checking 
-    const docRef = doc(collection(firestore, 'inventory'), item);
+  const updateInventory = async (userId) => {
+    const snapshot = query(collection(firestore, `users/${userId}/inventory`));
+    const docs = await getDocs(snapshot);
+    const inventoryList = [];
+    docs.forEach((doc) => {
+      inventoryList.push({
+        name: doc.id,
+        ...doc.data(),
+      });
+    });
+    setInventory(inventoryList);
+  };
+
+  const addItem = async (item) => {
+    if (item.trim() === '') return;
+    const userId = user.uid;
+    const docRef = doc(collection(firestore, `users/${userId}/inventory`), item);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -74,11 +74,12 @@ export default function TrackerPage() {
       await setDoc(docRef, { quantity: 1 });
     }
 
-    await updateInventory(); 
+    await updateInventory(userId);
   };
 
   const removeItem = async (item) => {
-    const docRef = doc(collection(firestore, 'inventory'), item);
+    const userId = user.uid;
+    const docRef = doc(collection(firestore, `users/${userId}/inventory`), item);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -90,7 +91,7 @@ export default function TrackerPage() {
       }
     }
 
-    await updateInventory(); 
+    await updateInventory(userId);
   };
 
   const handleOpen = () => setOpen(true);
@@ -103,42 +104,26 @@ export default function TrackerPage() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      router.push('/'); 
+      router.push('/');
     } catch (error) {
       console.error('Sign out error:', error);
     }
   };
 
-  // Function for updating the users inventory
-  const updateInventory = async () => {
-    const snapshot = query(collection(firestore, 'inventory'));
-    const docs = await getDocs(snapshot);
-    const inventoryList = [];
-    docs.forEach((doc) => {
-      inventoryList.push({
-        name: doc.id,
-        ...doc.data(),
-      });
-    });
-    setInventory(inventoryList);
-  };
-
-  
   const getFirstName = (fullName) => {
     if (fullName) {
       const nameParts = fullName.split(' ');
-      return nameParts[0]; 
+      return nameParts[0];
     }
     return '';
   };
 
-
   const fetchRecipes = async () => {
-    const apiKey = 'f290ea3c4c8e493eaa84c32f30ed1572'; 
-    const ingredients = inventory.map(item => item.name).join(','); 
-  
-    setLoadingRecipes(true); 
-  
+    const apiKey = 'f290ea3c4c8e493eaa84c32f30ed1572';
+    const ingredients = inventory.map(item => item.name).join(',');
+
+    setLoadingRecipes(true);
+
     try {
       if (ingredients.trim() === '') {
         setSnackbarMessage('No items in your pantry to find recipes.');
@@ -146,11 +131,11 @@ export default function TrackerPage() {
         setSnackbarOpen(true);
         return;
       }
-  
+
       const response = await axios.get(
         `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&number=5&apiKey=${apiKey}`
       );
-  
+
       if (response.data.length === 0) {
         setSnackbarMessage('No recipes found with the current ingredients.');
         setSnackbarSeverity('info');
@@ -158,92 +143,118 @@ export default function TrackerPage() {
         setSnackbarMessage('Recipes successfully loaded!');
         setSnackbarSeverity('success');
       }
-  
+
       setRecipes(response.data);
     } catch (error) {
       console.error('Error fetching recipes:', error);
       setSnackbarMessage('Error fetching recipes.');
       setSnackbarSeverity('error');
-      setRecipes([]); 
+      setRecipes([]);
     } finally {
-      setLoadingRecipes(false); 
-      setSnackbarOpen(true); 
+      setLoadingRecipes(false);
+      setSnackbarOpen(true);
     }
   };
   
 
   return (
     <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
+      sx={{
+        backgroundImage: 'url(/pantry.png)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        overflow: 'auto', 
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column"
+      }}
+
+      
     >
-      {/* Navbar */}
-      <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
+       {/* Navbar */}
+       <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Left Section: Logo and Pantrack Text */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => handleNavClick('/')}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="logo"
+              sx={{ mr: 2 }}
+              onClick={() => handleNavClick('/')}
+            >
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}></Typography>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}> ㅤ ㅤ ㅤ</Typography>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+            ㅤ  ㅤ ㅤ
+            </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Link
-                href="#"
-                onClick={() => handleNavClick('/')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-              >
-                Home
-              </Link>
-              <Link
-                href="#"
-                onClick={() => handleNavClick('/tracker')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-              >
-                Tracker
-              </Link>
-              <Link
-                href="#"
-                onClick={() => handleNavClick('/contact')}
-                sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
-              >
-                Contact
-              </Link>
-            </Box>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
+            <Link
+              href="#"
+              onClick={() => handleNavClick('/')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+            >
+              Home
+            </Link>
+            <Link
+              href="#"
+              onClick={() => handleNavClick('/tracker')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+            >
+              Tracker
+            </Link>
+            <Link
+              href="#"
+              onClick={() => handleNavClick('/contact')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
+            >
+              Contact
+            </Link>
           </Box>
 
           {/* Google Sign-In Button or User Info */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar
+              alt={user ? user.displayName : 'User Avatar'}
+              src={user ? user.photoURL : '/noaccount.png'}
+              sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
+            />
             {!user ? (
-              <Button
-                variant="contained"
-                onClick={handleSignIn}
-                sx={{ backgroundColor: '#22C55E', '&:hover': { backgroundColor: '#16A34A' } }}
-                style={{ borderRadius: '20px' }}
-              >
-                Sign In
+              <>
+                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                  Guest
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleSignIn}
+                  sx={{
+                    backgroundColor: '#22C55E',
+                    '&:hover': { backgroundColor: '#16A34A' },
+                    borderRadius: '20px',
+                    display: 'block', // Ensure it displays on all screens
+                  }}
+                >
+                  Sign In
               </Button>
+              </>
             ) : (
               <>
-                <Avatar
-                  alt={user.displayName}
-                  src={user.photoURL}
-                  sx={{ width: 40, height: 40, marginRight: 2 }}
-                />
                 <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  {user.displayName.split(' ')[0]} {/* Displays first name only */}
+                  {user.displayName.split(' ')[0]} {/* Display first name only */}
                 </Typography>
                 <Button
                   variant="contained"
                   onClick={handleSignOut}
-                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
-                  style={{ borderRadius: '20px' }}
+                  sx={{
+                    backgroundColor: '#FF5555',
+                    '&:hover': { backgroundColor: '#B73E3E' },
+                    borderRadius: '20px',
+                  }}
                 >
                   Sign Out
                 </Button>
@@ -255,24 +266,19 @@ export default function TrackerPage() {
 
       {/* Main Content */}
       <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-          backgroundImage: 'url(/pantry.png)', 
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat', 
-          overflow: 'hidden'
-        }}
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        flexGrow={1}
       >
+
         <br></br>
         <br></br>
         {/* Inventory Section */}
-        <Box width="60%" p={2} bgcolor="white" borderRadius={4} boxShadow={2}>
+        <Box width="60%" spacing={2} p={2} bgcolor="white" borderRadius={4} boxShadow={2}>
   <Typography variant="h4" spacing={2} mb={2} fontWeight={'bold'}>
+    <br></br>
     🍳Your Pantry
   </Typography>
   <Stack direction="row" spacing={2} mb={2}>
@@ -371,6 +377,7 @@ export default function TrackerPage() {
             color="primary"
             onClick={fetchRecipes}
             disabled={loadingRecipes}
+            spacing={2} mb={2}
           >
             {loadingRecipes ? 'Loading Recipes...' : 'Get Recipes'}
           </Button>
@@ -399,6 +406,7 @@ export default function TrackerPage() {
                   target="_blank"
                 >
                   View Recipe
+                  <br></br>
                 </Button>
               </ListItem>
               

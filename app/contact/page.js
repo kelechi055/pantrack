@@ -1,33 +1,48 @@
-'use client'; 
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Box, AppBar, Toolbar, IconButton, Link, Avatar, Typography, TextField, Button } from '@mui/material';
-import Image from 'next/image'; 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/firebase'; 
+import { signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '@/firebase';
+
+const provider = new GoogleAuthProvider();
 
 export default function ContactPage() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
   const [status, setStatus] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    
     const unsubscribeAuth = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
+      setLoading(false); // Set loading to false once user state is resolved
     });
 
-    return () => unsubscribeAuth(); 
+    return () => unsubscribeAuth();
   }, []);
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      router.push('/'); 
+      router.push('/');
     } catch (error) {
       console.error('Sign out error:', error);
     }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error('Sign in error:', error);
+    }
+  };
+
+  const handleNavClick = (path) => {
+    router.push(path);
   };
 
   const handleSubmit = async (e) => {
@@ -57,66 +72,112 @@ export default function ContactPage() {
 
   return (
     <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
+      sx={{
+        backgroundImage: 'url(/pantry.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        overflow: 'auto',
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column"
+      }}
     >
-      {/* Top Navbar */}
+      {/* Navbar */}
       <AppBar position="static" sx={{ backgroundColor: '#212121', padding: '10px 20px' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Left Section: Logo and Pantrack Text */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="logo" sx={{ mr: 2 }} onClick={() => router.push('/')}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="logo"
+              sx={{ mr: 2 }}
+              onClick={() => handleNavClick('/')}
+            >
               <Image src="/pantracklogo.png" alt="Pantrack Logo" width={60} height={60} />
             </IconButton>
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-            ㅤ  ㅤ ㅤ
+              ㅤ  ㅤ ㅤ
             </Typography>
           </Box>
 
           {/* Centered Navigation Links */}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
             <Link
               href="#"
-              onClick={() => router.push('/')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              onClick={() => handleNavClick('/')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
             >
               Home
             </Link>
             <Link
               href="#"
-              onClick={() => router.push('/tracker')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              onClick={() => handleNavClick('/tracker')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
             >
               Tracker
             </Link>
             <Link
               href="#"
-              onClick={() => router.push('/contact')}
-              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', margin: '0 20px' }}
+              onClick={() => handleNavClick('/contact')}
+              sx={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', mx: 2 }}
             >
               Contact
             </Link>
           </Box>
 
-          {/* User Profile Section */}
+          {/* Google Sign-In Button or User Info */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {user && (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={user.displayName || 'User'} src={user.photoURL || '/default-avatar.png'} sx={{ mr: 2 }} />
-                <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
-                  {user.displayName.split(' ')[0]} {/* Display first name only */}
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleSignOut}
-                  sx={{ backgroundColor: '#FF5555', '&:hover': { backgroundColor: '#B73E3E' } }}
-                  style={{ borderRadius: '20px' }}
-                >
-                  Sign Out
-                </Button>
-              </Box>
+            {loading ? (
+              <Typography variant="body1" sx={{ color: 'white' }}>
+                Loading...
+              </Typography>
+            ) : (
+              <>
+                <Avatar
+                  alt={user ? user.displayName : 'User Avatar'}
+                  src={user ? user.photoURL : '/noaccount.png'}
+                  sx={{ width: 40, height: 40, marginRight: 2, pointerEvents: 'none' }}
+                />
+                {!user ? (
+                  <>
+                    <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                      Guest
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={handleSignIn}
+                      sx={{
+                        backgroundColor: '#22C55E',
+                        '&:hover': { backgroundColor: '#16A34A' },
+                        borderRadius: '20px',
+                        display: 'block',
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="body1" sx={{ color: 'white', marginRight: 2 }}>
+                      {user.displayName.split(' ')[0]}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={handleSignOut}
+                      sx={{
+                        backgroundColor: '#FF5555',
+                        '&:hover': { backgroundColor: '#B73E3E' },
+                        borderRadius: '20px',
+                      }}
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                )}
+              </>
             )}
           </Box>
         </Toolbar>
@@ -125,7 +186,7 @@ export default function ContactPage() {
       {/* Main Content */}
       <Box
         width="100%"
-        height="calc(100% - 64px - 50px)" 
+        height="calc(100% - 64px - 50px)"
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -136,11 +197,10 @@ export default function ContactPage() {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100vh',
-          backgroundImage: 'url(/loginbg.png)', 
+          backgroundImage: 'url(/loginbg.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat', 
-          overflow: 'hidden'
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <Box
@@ -158,7 +218,7 @@ export default function ContactPage() {
           <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
             Contact Me ✉️
           </Typography>
-          
+
           <Typography variant="body1" sx={{ mb: 4 }}>
             Any suggestions or inquiries? Feel free to reach out to using the form below.
           </Typography>
