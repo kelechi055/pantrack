@@ -6,7 +6,7 @@
 
 ## **Features**
 
-- **Track Inventory:** Easily add, remove, and update items in your pantry.
+- **Track Inventory:** Easily add, remove, search, and update items in your pantry.
 - **Find Recipes:** Get personalized recipe suggestions based on your available ingredients.
 - **User Authentication:** Securely sign in using Google Authentication.
 - **Real-time Updates:** Sync your pantry data across devices.
