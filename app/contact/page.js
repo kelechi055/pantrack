@@ -103,7 +103,7 @@ export default function ContactPage() {
       </Typography>
     </Box>
 
-    {/* Centered Navigation Links */}
+    {/* Centered Navigation Links*/}
     <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, justifyContent: 'center' }}>
       <Link
         href="#"
