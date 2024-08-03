@@ -15,6 +15,6 @@
 
 ## **Tech Stack**
 
-- **Frontend:** Next.js, React, Material-UI
-- **Backend:** Firebase Firestore, Firebase Authentication
+- **Frontend:** JavaScript, Next.js, React, Material-UI
+- **Backend:** JavaScript, Firebase Firestore, Firebase Google Authentication
 - **APIs:** Spoonacular API for recipe suggestions
