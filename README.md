@@ -1,6 +1,6 @@
 # **Pantrack** 🥕
 
-**Pantrack** is a modern pantry management application to effortlessly manage your pantry.
+**Pantrack** is a modern pantry management application to effortlessly manage your pantry. Currently at 50+ Active Users 🔥
 
 ---
 
