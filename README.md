@@ -18,3 +18,5 @@
 - **Frontend:** JavaScript, Next.js, React, Material-UI
 - **Backend:** JavaScript, Firebase Firestore, Firebase Google Authentication
 - **APIs:** Spoonacular API for recipe suggestions
+
+![Cardwiz Demo Graphic](https://i.postimg.cc/tgbT7tm2/Pantrackfinal.png)
